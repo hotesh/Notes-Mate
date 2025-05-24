@@ -14,6 +14,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+// Analytics will be initialized later
+
 // Set session-only persistence (user will be logged out when browser is closed)
 if (typeof window !== 'undefined') {
   // Force immediate application of session-only persistence
@@ -38,16 +40,25 @@ const googleProvider = new GoogleAuthProvider();
 
 // Initialize Analytics only in production and browser environment
 let analytics = null;
-if (import.meta.env.PROD && typeof window !== 'undefined') {
-  import('firebase/analytics').then(({ getAnalytics }) => {
-    try {
-      analytics = getAnalytics(app);
-    } catch (error) {
-      console.error('Error initializing Firebase Analytics:', error);
-    }
-  }).catch(error => {
-    console.error('Error loading Firebase Analytics:', error);
-  });
+if (import.meta.env.PROD && typeof window !== 'undefined' && import.meta.env.VITE_FIREBASE_MEASUREMENT_ID) {
+  // Wrap in try-catch to prevent uncaught errors
+  try {
+    // Use a more defensive approach to analytics initialization
+    const initAnalytics = async () => {
+      try {
+        const { getAnalytics } = await import('firebase/analytics');
+        analytics = getAnalytics(app);
+        console.log('Firebase Analytics initialized successfully');
+      } catch (error) {
+        console.log('Firebase Analytics initialization skipped:', error.message);
+      }
+    };
+    
+    // Initialize analytics but don't block the main thread
+    setTimeout(() => initAnalytics(), 0);
+  } catch (e) {
+    console.log('Error setting up Firebase Analytics:', e.message);
+  }
 }
 
 export { app, auth, googleProvider, analytics }; 
