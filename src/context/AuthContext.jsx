@@ -9,6 +9,7 @@ import {
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { auth, googleProvider } from '../config/firebase';
 import { getApiUrl } from '../utils/api';
+import ownerImage from '../assets/owner.jpg';
 
 const AuthContext = createContext();
 
@@ -42,12 +43,17 @@ export const AuthProvider = ({ children }) => {
       
       // Prioritize backend data for user-editable fields like name
       // but keep Firebase auth fields like uid, email verification status, etc.
+      
+      // If user is admin, use the owner image as profile photo
+      const photoURL = data.isAdmin ? ownerImage : (data.photoURL || firebaseUser.photoURL);
+      
       return {
         ...firebaseUser,
         ...data,
         // Keep Firebase auth fields that shouldn't be overridden
         displayName: data.name || firebaseUser.displayName, // Use backend name if available
         name: data.name || firebaseUser.displayName, // Ensure name is set from backend
+        photoURL: photoURL, // Use owner image for admin, otherwise use the user's photo
         isAdmin: data.isAdmin
       };
     } catch (err) {

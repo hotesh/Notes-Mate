@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
+import ownerImage from '../assets/owner.jpg';
 
 const About = () => {
   const { isDarkMode } = useTheme();
@@ -32,7 +33,7 @@ const About = () => {
       name: "Hitesh Gowda",
       role: "Full Stack Developer",
       description: "Passionate about creating user-friendly applications and solving real-world problems through technology.",
-      image: "/src/assets/owner.jpg"
+      image: ownerImage
     }
   ];
 
