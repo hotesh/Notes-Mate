@@ -15,7 +15,7 @@ import {
 import { fadeInUp, staggerContainer } from '../utils/animations';
 
 const Profile = () => {
-  const { user, updateUserProfile } = useAuth();
+  const { user, updateUserProfile, logout } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -75,25 +75,19 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
+    
     try {
-      setError('');
-      setSuccess('');
-      setLoading(true);
-      
-      const profileDataToUpdate = {
-        name: formData.name,
-        semester: formData.semester,
-        branch: formData.branch,
+      // Create form data for API request
+      const profileData = {
+        ...formData,
+        photoFile: selectedFile
       };
-      // Add photoFile only if a new file is selected
-      if (selectedFile) {
-        profileDataToUpdate.photoFile = selectedFile;
-      }
-
-      const updatedUser = await updateUserProfile(profileDataToUpdate);
       
+      const updatedUser = await updateUserProfile(profileData);
       setSuccess('Profile updated successfully!');
-      // Clear the preview and selected file after successful upload
       setSelectedFile(null);
       // The user object in AuthContext will update, which should refresh user.photoURL
       // No need to manually set imagePreview here if it relies on user.photoURL
@@ -108,11 +102,14 @@ const Profile = () => {
     }
   };
 
+  // Handle user logout
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/login');
+      navigate('/');
+      console.log('User logged out successfully');
     } catch (err) {
+      console.error('Logout failed:', err);
       setError('Failed to log out. Please try again.');
     }
   };
@@ -291,6 +288,16 @@ const Profile = () => {
                   disabled={loading}
                 >
                   {loading ? 'Updating...' : 'Update Profile'}
+                </AnimatedButton>
+              </motion.div>
+              
+              <motion.div variants={fadeInUp} className="pt-4 mt-4">
+                <AnimatedButton
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-300"
+                >
+                  Sign Out
                 </AnimatedButton>
               </motion.div>
             </motion.form>
