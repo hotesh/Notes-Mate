@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import ownerImage from '../assets/owner.jpg';
+import ownerImage2 from '../assets/owner2.jpg';
 
 const About = () => {
   const { isDarkMode } = useTheme();
@@ -31,9 +32,15 @@ const About = () => {
   const teamMembers = [
     {
       name: "Hitesh Gowda",
-      role: "Full Stack Developer",
-      description: "Passionate about creating user-friendly applications and solving real-world problems through technology.",
+      role: "Backend Developer",
+      description: "Specializes in building robust server-side applications and ensuring seamless data flow.",
       image: ownerImage
+    },
+    {
+      name: "Naveen MP",
+      role: "Front-end Developer",
+      description: "Crafts beautiful and intuitive user interfaces, bringing designs to life with clean code.",
+      image: ownerImage2
     }
   ];
 
@@ -131,7 +138,7 @@ const About = () => {
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-12 text-center">
             Our Team
           </h2>
-          <div className="flex justify-center max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
             {teamMembers.map((member, index) => (
               <motion.div
                 key={index}
